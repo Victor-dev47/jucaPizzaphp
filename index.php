@@ -13,6 +13,12 @@ $url = isset($_GET['url']) ? $_GET['url'] : '';
 
 $database = new Database();
 $db = $database->getConnection();
+
+if (!$db) {
+    echo "<!DOCTYPE html>\n<html lang='pt-BR'>\n<head>\n<meta charset='UTF-8'>\n<title>Erro de Conexão</title>\n</head>\n<body>\n<h1>Erro de conexão com o banco de dados</h1>\n<p>Verifique se o MySQL está rodando e se as credenciais estão corretas.</p>\n</body>\n</html>";
+    exit;
+}
+
 $pizza = new Pizza($db);
 
 echo "<!DOCTYPE html>\n<html lang='pt-BR'>\n<head>\n<meta charset='UTF-8'>\n<title>Pizzaria do Juca</title>\n</head>\n<body>\n<h1>🍕 Pizzaria do Juca</h1><hr>";
@@ -22,16 +28,16 @@ switch ($url) {
     // 📋 LISTAR
     case 'listar':
 
-        echo "<a href='/'>Voltar</a><br><br>";
+        echo "<a href='./'>Voltar</a><br><br>";
 
-        foreach ($pizza->read() as $p) {
+        foreach ($pizza->getall() as $p) {
             echo "
             <p>
                 <strong>{$p['nome']}</strong><br>
                 {$p['ingredientes']}<br>
                 R$ {$p['valor']}<br>
-                <a href='editar/{$p['id']}'>✏️ Editar</a> |
-                <a href='deletar/{$p['id']}'>🗑️ Deletar</a>
+                <a href='editar/{$p['idPizza']}'>✏️ Editar</a> |
+                <a href='deletar/{$p['idPizza']}'>🗑️ Deletar</a>
             </p><hr>";
         }
         break;
@@ -45,7 +51,8 @@ switch ($url) {
             $pizza->valor = $_POST['valor'];
 
             $pizza->create();
-            header("Location: /listar");
+            header("Location: listar");
+            exit;
         }
 
         echo "
@@ -69,31 +76,37 @@ switch ($url) {
             $dados = $pizza->find($id);
 
             if ($_POST) {
-                $pizza->id = $id;
+                $pizza->idPizza = $id;
                 $pizza->nome = $_POST['nome'];
                 $pizza->ingredientes = $_POST['ingredientes'];
                 $pizza->valor = $_POST['valor'];
 
                 $pizza->update();
-                header("Location: /listar");
+                header("Location: listar");
+                exit;
             }
 
-            echo "
-            <h2>Editar Pizza</h2>
-            <form method='POST'>
-                Nome: <input name='nome' value='{$dados['nome']}'><br>
-                Ingredientes: <input name='ingredientes' value='{$dados['ingredientes']}'><br>
-                Valor: <input name='valor' value='{$dados['valor']}'><br>
-                <button>Atualizar</button>
-            </form>
-            ";
+            if (!$dados) {
+                echo "<p>Pizza não encontrada.</p>";
+            } else {
+                echo "
+                <h2>Editar Pizza</h2>
+                <form method='POST'>
+                    Nome: <input name='nome' value='{$dados['nome']}'><br>
+                    Ingredientes: <input name='ingredientes' value='{$dados['ingredientes']}'><br>
+                    Valor: <input name='valor' value='{$dados['valor']}'><br>
+                    <button>Atualizar</button>
+                </form>
+                ";
+            }
         }
 
         // deletar/ID
         elseif (preg_match('/deletar\/(\d+)/', $url, $matches)) {
 
             $pizza->delete($matches[1]);
-            header("Location: /listar");
+            header("Location: listar");
+            exit;
         }
 
         // HOME

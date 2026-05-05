@@ -9,7 +9,7 @@ $db_name = 'jucapizzasdb';
 
 try {
     $dsn = "mysql:host=$host;port=$port;charset=utf8";
-    $pdo = new PDO($dsn, $username, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdo = new PDO($dsn, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `$db_name` CHARACTER SET utf8 COLLATE utf8_general_ci");
     $pdo->exec("USE `$db_name`");

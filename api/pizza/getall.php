@@ -20,6 +20,23 @@ include_once '../../models/Pizza.php';
 $database = new Database();
 
 $db = $database->getConnection();
+
+if (!function_exists('http_response_code')) {
+    function http_response_code($code = null) {
+        static $current_code = 200;
+        if ($code !== null) {
+            header('X-PHP-Response-Code: ' . $code, true, $code);
+            $current_code = $code;
+        }
+        return $current_code;
+    }
+}
+
+if (!$db) {
+    http_response_code(500);
+    echo json_encode(array("message" => "Erro de conexão com o banco de dados."));
+    exit;
+}
  
 // Instanciar o objeto Pizza
 
@@ -28,8 +45,15 @@ $pizza = new Pizza($db);
 // try{ colocar para demonstrar erro com coluna errada mas lá no método read em pizza
 
     // Chamar o método read() para buscar as pizzas
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $stmt = $pizza->read();
+    }
 
-    $stmt = $pizza->read();
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(array("message" => "Erro ao consultar as pizzas."));
+        exit;
+    }
 
     $num = $stmt->rowCount();
  
@@ -68,7 +92,7 @@ $pizza = new Pizza($db);
         // Definir o código de resposta como 200 OK
 
         http_response_code(200);
-        header("http/1.0 200ok");
+        header("HTTP/1.1 200 OK");
  
         // Mostrar os dados das pizzas em formato JSON
 
