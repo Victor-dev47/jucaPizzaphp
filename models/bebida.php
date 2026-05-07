@@ -1,13 +1,13 @@
 <?php
  
-class Pizza
+class Bebida
 {
     private $conn;
-    private $tabela = "pizzas";
-    public $idpizza;
-    public $idPizza;
+    private $tabela = "bebida";
+    public $idbebida;
+    public $idBebida;
     public $nome;
-    public $ingredientes;
+    public $tipo;
     public $valor;
  
     public function __construct($conexao)
@@ -17,12 +17,12 @@ class Pizza
  
     private function getIdValue()
     {
-        return ($this->idPizza !== null) ? $this->idPizza : $this->idpizza;
+        return ($this->idBebida !== null) ? $this->idBebida : $this->idbebida;
     }
  
     public function getall()
     {
-        $query = "SELECT idPizza AS idpizza, nome, ingredientes, valor FROM " . $this->tabela;
+        $query = "SELECT idBebida AS idbebida, nome, tipo, valor FROM " . $this->tabela;
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -35,7 +35,7 @@ class Pizza
             return false;
         }
 
-        $query = "SELECT idPizza AS idpizza, nome, ingredientes, valor FROM " . $this->tabela . " WHERE idPizza = ? LIMIT 1";
+        $query = "SELECT idBebida AS idbebida, nome, tipo, valor FROM " . $this->tabela . " WHERE idBebida = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -45,10 +45,10 @@ class Pizza
             return false;
         }
 
-        $this->idpizza = $row['idpizza'];
-        $this->idPizza = $row['idpizza'];
+        $this->idbebida = $row['idbebida'];
+        $this->idBebida = $row['idbebida'];
         $this->nome = $row['nome'];
-        $this->ingredientes = $row['ingredientes'];
+        $this->tipo = $row['tipo'];
         $this->valor = $row['valor'];
 
         return true;
@@ -56,7 +56,7 @@ class Pizza
  
     public function find($id)
     {
-        $query = "SELECT idPizza AS idpizza, nome, ingredientes, valor FROM " . $this->tabela . " WHERE idPizza = ? LIMIT 1";
+        $query = "SELECT idBebida AS idbebida, nome, tipo, valor FROM " . $this->tabela . " WHERE idBebida = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -65,13 +65,13 @@ class Pizza
  
     public function create()
     {
-        $query = "INSERT INTO " . $this->tabela . " (nome, ingredientes, valor) VALUES (?, ?, ?)";
+        $query = "INSERT INTO " . $this->tabela . " (nome, tipo, valor) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        $success = $stmt->execute(array($this->nome, $this->ingredientes, $this->valor));
+        $success = $stmt->execute(array($this->nome, $this->tipo, $this->valor));
 
         if ($success) {
-            $this->idpizza = $this->conn->lastInsertId();
-            $this->idPizza = $this->idpizza;
+            $this->idbebida = $this->conn->lastInsertId();
+            $this->idBebida = $this->idbebida;
         }
 
         return $success;
@@ -84,14 +84,14 @@ class Pizza
             return false;
         }
 
-        $query = "UPDATE " . $this->tabela . " SET nome = ?, ingredientes = ?, valor = ? WHERE idPizza = ?";
+        $query = "UPDATE " . $this->tabela . " SET nome = ?, tipo = ?, valor = ? WHERE idBebida = ?";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute(array($this->nome, $this->ingredientes, $this->valor, $id));
+        return $stmt->execute(array($this->nome, $this->tipo, $this->valor, $id));
     }
  
     public function delete($id)
     {
-        $query = "DELETE FROM " . $this->tabela . " WHERE idPizza = ?";
+        $query = "DELETE FROM " . $this->tabela . " WHERE idBebida = ?";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute(array($id));
     }

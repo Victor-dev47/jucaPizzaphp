@@ -36,8 +36,8 @@ switch ($url) {
                 <strong>{$p['nome']}</strong><br>
                 {$p['ingredientes']}<br>
                 R$ {$p['valor']}<br>
-                <a href='editar/{$p['idPizza']}'>✏️ Editar</a> |
-                <a href='deletar/{$p['idPizza']}'>🗑️ Deletar</a>
+                <a href='editar/{$p['idpizza']}'>✏️ Editar</a> |
+                <a href='deletar/{$p['idpizza']}'>🗑️ Deletar</a>
             </p><hr>";
         }
         break;

@@ -13,7 +13,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 include_once '../../config/Database.php';
 
-include_once '../../models/Pizza.php';
+include_once '../../models/Bebida.php';
  
 // Instanciar o objeto Database e obter a conexão
 
@@ -39,19 +39,19 @@ if (!$db) {
     exit;
 }
  
-// Instanciar o objeto Pizza
+// Instanciar o objeto Bebida
 
-$pizza = new Pizza($db);
+$bebida = new Bebida($db);
  
-    // Chamar o método getall() para buscar as pizzas
+    // Chamar o método getall() para buscar as bebidas
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $stmt = $pizza->getall();
+        $stmt = $bebida->getall();
     }
 
     if (!$stmt) {
         //http_response_code(500);
         header("HTTP/1.1 500 Internal Server Error");
-        echo json_encode(array("message" => "Erro ao consultar as pizzas."));
+        echo json_encode(array("message" => "Erro ao consultar as bebidas."));
         exit;
     }
 
@@ -64,17 +64,17 @@ $pizza = new Pizza($db);
     }
 
     if (count($rows) > 0) {
-        $pizzas_arr = array();
+        $bebidas_arr = array();
 
         foreach ($rows as $row) {
-            $pizza_item = array(
-                "id" => $row['idpizza'],
+            $bebida_item = array(
+                "id" => $row['idbebida'],
                 "nome" => $row['nome'],
-                "ingredientes" => $row['ingredientes'],
+                "tipo" => $row['tipo'],
                 "valor" => $row['valor']
             );
 
-            array_push($pizzas_arr, $pizza_item);
+            array_push($bebidas_arr, $bebida_item);
         }
  
         // Definir o código de resposta como 200 OK
@@ -82,21 +82,21 @@ $pizza = new Pizza($db);
         //http_response_code(200);
         header("HTTP/1.1 200 OK");
  
-        // Mostrar os dados das pizzas em formato JSON
+        // Mostrar os dados das bebidas em formato JSON
 
-        echo json_encode($pizzas_arr);
+        echo json_encode($bebidas_arr);
 
     } else {
 
-        // Se nenhuma pizza for encontrada, definir o código de resposta como 404 Not Found
+        // Se nenhuma bebida for encontrada, definir o código de resposta como 404 Not Found
 
         //http_response_code(404);
  
-        // Informar ao usuário que nenhuma pizza foi encontrada
+        // Informar ao usuário que nenhuma bebida foi encontrada
 
         echo json_encode(
 
-            array("message" => "Nenhuma pizza encontrada.")
+            array("message" => "Nenhuma bebida encontrada.")
 
         );
 
@@ -109,5 +109,4 @@ $pizza = new Pizza($db);
 //  echo json_encode(array("erro" => $e->getMessage()));
 
 // }
- 
  
