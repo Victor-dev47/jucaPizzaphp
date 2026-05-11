@@ -24,24 +24,44 @@ $bebida = new Bebida($db);
 $bebida->idBebida = isset($_GET['id']) ? (int) $_GET['id'] : 0;
  
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($bebida->idBebida > 0 && $bebida->get()) {
+    
+    // ID não informado
+    if ($bebida->idBebida <= 0) {
+
+        header("HTTP/1.1 400 Bad Request");
+
+        echo json_encode(array(
+            "message" => "id não informado."
+        ));
+
+    // ID informado e encontrado
+    } elseif ($bebida->get()) {
+
         $bebida_arr = array(
-            "id" => $bebida->idbebida,
+            "id" => $bebida->idBebida,
             "nome" => $bebida->nome,
             "tipo" => $bebida->tipo,
             "valor" => $bebida->valor
         );
- 
+
         echo json_encode($bebida_arr);
+
+    // ID informado mas não existe
     } else {
-        //http_response_code(404);
+
         header("HTTP/1.1 404 Not Found");
-        echo json_encode(array("message" => "Bebida não encontrada."));
+
+        echo json_encode(array(
+            "message" => "id inválido."
+        ));
     }
+
 } else {
-    // http_response_code(405);
-        header("HTTP/1.1 405");
-    echo json_encode(array("message" => "Método não permitido."));
-     
-     
+
+    header("HTTP/1.1 405 Method Not Allowed");
+
+    echo json_encode(array(
+        "message" => "Método não permitido."
+    ));
 }
+?>
