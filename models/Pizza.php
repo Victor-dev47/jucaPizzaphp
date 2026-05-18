@@ -65,20 +65,48 @@ class Pizza
  
     public function create()
     {
-        $query = "INSERT INTO " . $this->tabela . " (nome, ingredientes, valor) VALUES (?, ?, ?)";
+        $query = "INSERT INTO " . $this->tabela . " (nome, ingredientes, valor) VALUES (:nome, :ingredientes, :valor)";
         $stmt = $this->conn->prepare($query);
-        $success = $stmt->execute(array($this->nome, $this->ingredientes, $this->valor));
-
-        if ($success) {
-            $this->idpizza = $this->conn->lastInsertId();
-            $this->idPizza = $this->idpizza;
+        $stmt->bindValue(':nome', $this->nome);
+        $stmt->bindValue(':ingredientes', $this->ingredientes);
+        $stmt->bindValue(':valor', $this->valor);
+        if (!$stmt->execute()) {
+            return false;
         }
-
-        return $success;
+        $this->idPizza = $this->conn->lastInsertId();
+        return true;
     }
  
     public function update()
     {
+        
+        // Query de atualização
+        $query = 'UPDATE ' . $this->tabela . ' SET nome=:nome, ingredientes=:ingredientes, valor=:valor WHERE idPizza=:id';
+ 
+        // Preparar a query
+        $stmt = $this->conn->prepare($query);
+ 
+        // Limpar os dados
+        $this->nome = htmlspecialchars(strip_tags($this->nome));
+        $this->ingredientes = htmlspecialchars(strip_tags($this->ingredientes));
+        $this->valor = htmlspecialchars(strip_tags($this->valor));
+        $this->idPizza = htmlspecialchars(strip_tags($this->idPizza));
+ 
+        // Vincular os parâmetros
+        $stmt->bindParam(':nome', $this->nome);
+        $stmt->bindParam(':ingredientes', $this->ingredientes);
+        $stmt->bindParam(':valor', $this->valor);
+        $stmt->bindParam(':id', $this->idPizza);
+ 
+        // Executar a query
+        if($stmt->execute()) {
+            return true;
+        }
+     
+        return false;
+    }
+ 
+ 
         $id = $this->getIdValue();
         if (!$id) {
             return false;
