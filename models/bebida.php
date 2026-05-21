@@ -89,10 +89,21 @@ class Bebida
         return $stmt->execute(array($this->nome, $this->tipo, $this->valor, $id));
     }
  
-    public function delete($id)
-    {
-        $query = "DELETE FROM " . $this->tabela . " WHERE idBebida = ?";
+    public function delete() {
+        // Query de exclusão
+        $query = 'DELETE FROM ' . $this->tabela . ' WHERE idBebida=:id';
+ 
+        // Preparar a query
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute(array($id));
+ 
+        // Vincular o ID
+        $stmt->bindParam(':id', $this->idBebida);
+ 
+        // Executar a query
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
     }
+ 
 }

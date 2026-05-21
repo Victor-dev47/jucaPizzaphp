@@ -96,12 +96,23 @@ class Pizza
         return $stmt->execute();
     }
 
-    public function delete($id)
-    {
-        $query = "DELETE FROM " . $this->tabela . " WHERE idPizza = ?";
+    public function delete() {
+        // Query de exclusão
+        $query = 'DELETE FROM ' . $this->tabela . ' WHERE idPizza=:id';
+ 
+        // Preparar a query
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute(array($id));
+ 
+        // Vincular o ID
+        $stmt->bindParam(':id', $this->idPizza);
+ 
+        // Executar a query
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
     }
+ 
 
     public function add()
     {
